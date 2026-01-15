@@ -90,14 +90,13 @@ For data dictionary see the [dictionary](/Dictionary.md)
 ## Project Structure
 
 ```
-└───NBA-playoff-analysis
-    ├───for each
-    │   ├───player
-    │   ├───team_ratings
-    │   └───team_stats
-    ├───raw data
-    └───webscrapping scripts
-
+├───raw data
+├───report
+└───webscrapping scripts
+    └───web snapshots
+        ├───player table
+        ├───team_ratings table
+        └───team_stats table
 ```
 
 ## Future Enhancements
