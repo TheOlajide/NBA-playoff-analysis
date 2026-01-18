@@ -46,10 +46,10 @@ NBA-playoff-analysis
     |      ├───teams_conf_standings.csv
     |      ├───teams_division_standings.csv
     └───webscrapping scripts
-        └───web snapshots
-         |   ├───player table
-         |   ├───team_ratings table
-         |   └───team_stats table
-         └───webscrapping.py
+        ├───web snapshots
+        |   ├───player table
+        |   ├───team_ratings table
+        |   └───team_stats table
+        └───webscrapping.py
 
 ```
