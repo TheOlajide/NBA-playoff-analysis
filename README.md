@@ -36,25 +36,20 @@ For data dictionary see the [dictionary](/Dictionary.md)
 
 ```
 NBA-playoff-analysis
-    ├───analysis report
-    |     |_
-
-    
+    |───analysis report
+    |     ├───NBA Project PowerBI report.pbix
+    |     ├───NBA Project PowerBI report.pdf
+    |     ├───NBA Project Report.pdf
     ├───raw data
+    |      ├───players.csv
+    |      ├───ratings.csv
+    |      ├───teams_conf_standings.csv
+    |      ├───teams_division_standings.csv
     └───webscrapping scripts
         └───web snapshots
-            ├───player table
-            ├───team_ratings table
-            └───team_stats table
-            
+         |   ├───player table
+         |   ├───team_ratings table
+         |   └───team_stats table
+         └───webscrapping.py
+
 ```
-           
-## Future Enhancements
-
-- Add API-based scraping to reduce Selenium dependency
-
-- Expand dbt models to include advanced metrics (PER, win shares)
-
-- Automate CI/CD for dbt with GitHub Actions
-
-- Visualize inPower BI with live Snowflake connection (Direct Connect).
