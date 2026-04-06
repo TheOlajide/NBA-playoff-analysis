@@ -42,13 +42,13 @@ Data Visualization
 The workflow follows these stages:
 
 1. Data Collection:
-Python web scraping scripts extract NBA statistics such as player performance, team ratings, and conference standings from web sources. The scraped data is stored locally as CSV files.
+Python web scraping scripts extract NBA statistics data such as player performance, team ratings, and conference standings from a web source. The scraped data is stored locally as CSV files and pushed into snowflake via a custom python script.
 
 2. Raw Data Storage:
 The extracted datasets (players.csv, ratings.csv, and team standings data) serve as the raw input layer for the analytics pipeline.
 
 3. Data Transformation with dbt:
-The raw data is loaded into Snowflake and transformed using dbt through a layered architecture:
+The raw data loaded into Snowflake is transformed using dbt through a layered architecture:
 
 - Bronze Layer (Staging Models) Cleans and standardizes raw datasets into structured staging tables.
 - Gold Layer (Analytics Models) Produces curated datasets optimized for analysis, such as team ratings, conference standings, and player statistics.
@@ -61,16 +61,16 @@ The final transformed datasets are connected directly to Power BI, where dashboa
 
 ## Methodology
 
-Raw data is first scraped from the web using a Python library designed for extracting information from online sources. Once collected, these raw datasets are loaded directly into a staging schema in snowflake, where they are stored in their original or minimally processed form. 
+Raw data is first scraped from the web using a Python library designed for extracting information from online sources. Once collected, these raw datasets are loaded with python into a staging schema in snowflake, where they are stored in their original or minimally processed form. 
 From there, DBT (Data Build Tool) connects to the staging schema and applies a series of transformations such as cleaning, standardizing, and modeling the data. The transformed datasets are then loaded into a destination schema within Snowflake that is structured and optimized for analytical use.
-Finally, Power BI connects directly to this destination schema to perform data analysis and create interactive dashboards and visualizations for reporting and insights.
+Finally, Power BI can connect to this destination schema to perform data analysis and create interactive dashboards and visualizations for reporting and insights.
 
 ```
-  Source Data                      ingestion         Storage/Transformation          Visualization
-  ──────────                       ─────────         ──────────────────────          ─────────────
+  Source Data                      ingestion         Storage/Transformation           Visualization
+  ──────────                       ─────────         ──────────────────────           ─────────────
 
   players table.html       ─┐                                            
-  team_ratings table.html  ─┼──>   Snowflake  ──>    [Raw]     ──>   [Mart]    ──>   Dashboard/Reports
+  team_ratings table.html  ─┼──>   Snowflake  ──>    [Raw]     ──>   [Mart]    ──>    Dashboard/Reports
   team_stats table.html    ─┘     (warehouse)       (Staging)       (Analytics)          (Output)
 
 ```
@@ -78,23 +78,23 @@ Finally, Power BI connects directly to this destination schema to perform data a
 ## Project Structure
 The repository is organized into several directories that represent the different stages of the data pipeline, from data collection and transformation to analysis and reporting.
 
-- analysis_report/ contains the final analytical outputs of the project, including Power BI report (.pbix) and exported PDF reports summary of the NBA playoff analysis.
+- analysis_report/ - contains the final analytical outputs of the project, including Power BI report (.pbix) and exported PDF reports summary of the NBA playoff analysis.
 
-- transformation/dbt_NBA/ contains the dbt project used for transforming raw data into analytics-ready datasets.
+- transformation/dbt_NBA/ - contains the dbt project used for transforming raw data into analytics-ready datasets.
 
 - transformation/dbt_NBA/models/ directory is organized into a Bronze–Gold architecture, where the Bronze layer contains staging models that clean and standardize raw data (stg_ratings.sql, stg_teams_conf_standings.sql, stg_players.sql), while the Gold layer contains final analytical models (team_ratings.sql, conference_standing.sql, nba_players.sql). 
 Each model has corresponding YAML files that define documentation, tests, and metadata.
 Other folders such as macros/, seeds/, snapshots/, and tests/ support reusable SQL logic, seed data loading, historical tracking, and data quality testing.
 
-- data/raw/ stores the original datasets (CSV files) used in the project before transformation.
+- data/raw/ - stores the original datasets (CSV files) used in the project before transformation.
 
-- ingestion/scrapping/ contains the Python scripts used to scrape NBA data from the web, along with saved HTML snapshots of the source tables used during development.
+- ingestion/scrapping/ - contains the Python scripts used to scrape NBA data from the web, along with saved HTML snapshots of the source tables used during development.
 
-- docs/data_dictionary.md describes the datasets, including column definitions and descriptions.
+- docs/data_dictionary.md - describes the datasets, including column definitions and descriptions.
 
-- README.md This is the root readme that provides an overview of the project
+- README.md - This is the root readme that provides an overview of the project
 
-- .gitignore ensures unnecessary files are excluded from version control.
+- .gitignore - ensures unnecessary files are excluded from version control.
 
 
 ```
