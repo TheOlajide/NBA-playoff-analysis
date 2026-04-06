@@ -66,33 +66,35 @@ From there, DBT (Data Build Tool) connects to the staging schema and applies a s
 Finally, Power BI connects directly to this destination schema to perform data analysis and create interactive dashboards and visualizations for reporting and insights.
 
 ```
-  Source Data                       Storage/Transformation            Visualization
-  ──────────                        ──────────────────────            ─────────────
+  Source Data                      ingestion         Storage/Transformation          Visualization
+  ──────────                       ─────────         ──────────────────────          ─────────────
 
-  players table.html        ─┐                                            
-  team_ratings table.html   ─┼──>    [Raw]     ──>   [Mart]    ──>    Dashboard/Reports
-  team_stats table.html     ─┘     (Staging)       (Analytics)            (Output)
+  players table.html       ─┐                                            
+  team_ratings table.html  ─┼──>   Snowflake  ──>    [Raw]     ──>   [Mart]    ──>   Dashboard/Reports
+  team_stats table.html    ─┘     (warehouse)       (Staging)       (Analytics)          (Output)
 
 ```
 
 ## Project Structure
 The repository is organized into several directories that represent the different stages of the data pipeline, from data collection and transformation to analysis and reporting.
 
-- analysis report/ contains the final analytical outputs of the project, including the Power BI dashboard (.pbix) and exported PDF reports summarizing the NBA playoff analysis.
+- analysis_report/ contains the final analytical outputs of the project, including Power BI report (.pbix) and exported PDF reports summary of the NBA playoff analysis.
 
-- dbt_NBA/ contains the dbt project used for transforming raw data into analytics-ready datasets.
+- transformation/dbt_NBA/ contains the dbt project used for transforming raw data into analytics-ready datasets.
 
-- models/ directory is organized into a Bronze–Gold architecture, where the Bronze layer contains staging models that clean and standardize raw data (stg_ratings.sql, stg_teams_conf_standings.sql, stg_players.sql), while the Gold layer contains final analytical models (team_ratings.sql, conference_standing.sql, nba_players.sql). 
+- transformation/dbt_NBA/models/ directory is organized into a Bronze–Gold architecture, where the Bronze layer contains staging models that clean and standardize raw data (stg_ratings.sql, stg_teams_conf_standings.sql, stg_players.sql), while the Gold layer contains final analytical models (team_ratings.sql, conference_standing.sql, nba_players.sql). 
 Each model has corresponding YAML files that define documentation, tests, and metadata.
 Other folders such as macros/, seeds/, snapshots/, and tests/ support reusable SQL logic, seed data loading, historical tracking, and data quality testing.
 
-- raw data/ stores the original datasets (CSV files) used in the project before transformation.
+- data/raw/ stores the original datasets (CSV files) used in the project before transformation.
 
-- webscrapping scripts/ contains the Python scripts used to scrape NBA data from the web, along with saved HTML snapshots of the source tables used during development.
+- ingestion/scrapping/ contains the Python scripts used to scrape NBA data from the web, along with saved HTML snapshots of the source tables used during development.
 
-- data dictionary.md documents the datasets, including column definitions and descriptions.
+- docs/data_dictionary.md describes the datasets, including column definitions and descriptions.
 
-- README.md This is the root readme that provides an overview of the project, while .gitignore ensures unnecessary files are excluded from version control.
+- README.md This is the root readme that provides an overview of the project
+
+- .gitignore ensures unnecessary files are excluded from version control.
 
 
 ```
@@ -102,50 +104,61 @@ NBA-playoff-analysis
     |     ├───NBA Project PowerBI report.pdf
     |     └───NBA Project Report.pdf
     |
-    |───dbt_NBA
-    |     ├─── macros
-    |     ├─── models
-    |     |      ├─── bronze
-    |     |      |      ├─── dot sql
-    |     |      |      |      ├───stg_ratings.sql
-    |     |      |      |      ├───stg_teams_conf_standings.sql
-    |     |      |      |      └───stg_players.sql
-    |     |      |      | 
-    |     |      |      └─── dot yaml
-    |     |      |             ├─── _stg_ratings.yml
-    |     |      |             ├─── _stg_teams_conf_standings.yml
-    |     |      |             ├─── _stg_players.yml
-    |     |      |             └─── sources.yml      
-    |     |      └─── gold
-    |     |             ├─── dot sql 
-    |     |             |      ├─── team_ratings.sql
-    |     |             |      ├─── conference standing.sql
-    |     |             |      └─── nba_players.sql
-    |     |             | 
-    |     |             └─── dot yaml
-    |     |                    ├─── _team_ratings.yml
-    |     |                    ├─── _conference_standing.yml
-    |     |                    └─── _nba_players.yml                          
-    |     ├─── seeds
-    |     ├─── snapshots
-    |     ├─── tests
-    |     ├─── .gitignore
-    |     ├─── dbt_project.yml
-    |     ├─── packages.yml
-    |     └─── readme.md
+    ├─── data
+    |     └─── raw
+    |          ├───players.csv
+    |          ├───ratings.csv
+    |          └───teams_conf_standings.csv
     |
-    ├───raw data
-    |      ├───players.csv
-    |      ├───ratings.csv
-    |      └───teams_conf_standings.csv
-    ├───webscrapping scripts
-    |      ├───web snapshots
-    |      |   ├───player table
-    |      |   ├───team_ratings table
-    |      |   └───team_stats table
-    |      └───webscrapping script.py
+    |─── docs
+    |     └─── data dictionary.md
+    |
+    |─── ingestion
+    |      ├─── raw_to_snowflake.py
+    |      ├─── scrapping
+    |      |     └─── web snapshots
+    |      |           ├─── player table
+    |      |           ├─── team_ratings table
+    |      |           └─── team_stats table
+    |      └─── webscrapping script.py
+    |
+    |─── transformation
+    |     └───dbt_NBA  
+    |          ├─── macros
+    |          ├─── models
+    |          |      ├─── bronze
+    |          |      |      ├─── dot sql
+    |          |      |      |      ├───stg_ratings.sql
+    |          |      |      |      ├───stg_teams_conf_standings.sql
+    |          |      |      |      └───stg_players.sql
+    |          |      |      | 
+    |          |      |      └─── dot yaml
+    |          |      |             ├─── _stg_ratings.yml
+    |          |      |             ├─── _stg_teams_conf_standings.yml
+    |          |      |             ├─── _stg_players.yml
+    |          |      |             └─── sources.yml      
+    |          |      |
+    |          |      |
+    |          |      └─── gold
+    |          |             ├─── dot sql 
+    |          |             |      ├─── team_ratings.sql
+    |          |             |      ├─── conference standing.sql
+    |          |             |      └─── nba_players.sql
+    |          |             | 
+    |          |             └─── dot yaml
+    |          |                    ├─── _team_ratings.yml
+    |          |                    ├─── _conference_standing.yml
+    |          |                    └─── _nba_players.yml                          
+    |          ├─── seeds
+    |          ├─── snapshots
+    |          ├─── tests
+    |          ├─── .gitignore
+    |          ├─── dbt_project.yml
+    |          ├─── packages.yml
+    |          └─── readme.md
+    |
     ├───.gitignore
-    ├─── data dictionary.md
+    |
     └─── README.md
 ```
 ## Project Outcome
